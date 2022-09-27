@@ -66,9 +66,8 @@ public class EchoThread extends Thread {
                     socket.close();
                 } else {
 
-                    sendMessageToOther(line);
+//                    sendMessageToOther(line);
 
-                    System.out.println(line);
 
                     cout.writeBytes(line + "\n\r");
                     cout.flush();
@@ -79,7 +78,7 @@ public class EchoThread extends Thread {
                         FileWriter fw = new FileWriter("src\\chat.txt", true);
                         BufferedWriter bw = new BufferedWriter(fw);
                         PrintWriter out = new PrintWriter(bw);
-                        out.println(socket + " = " + line);
+//                        out.println(socket + " = " + line);
                         out.close();
                     } catch (IOException e) {
                         System.out.println("Error writing to file");

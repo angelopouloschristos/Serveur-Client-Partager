@@ -30,7 +30,6 @@ public class Server {
                 // new thread for a client
                 clientList.add(new EchoThread(socket, socket.hashCode()));
                 clientList.get(clientList.size() - 1).start();
-                System.out.println("hello");
 
 
                 // if new message receive, call run
@@ -49,7 +48,7 @@ public class Server {
     }
 
     public static void addMessage(String message){
-        messageList.add(message);
+//        messageList.add(message);
 
         Thread t = new Thread(new Runnable() {
             @Override
@@ -66,17 +65,21 @@ public class Server {
 
                 // print the list of all messages in one line
                 for (int i = 0; i < messageList.size(); i++) {
-                    System.out.print(messageList.get(i));
+                    System.out.print(messageList.get(i) + " ");
                 }
 
                 // for every client
-                for (int i = 0; i < clientList.size(); i++) {
+                for (EchoThread client: clientList) {
                     // send message to client
-                    clientList.get(i).sendMessageToOther(messageList.get(messageList.size() - 1));
+                    //transform all the message in one string
+                    StringBuilder message = new StringBuilder();
+                    for (int i = 0; i < messageList.size(); i++) {
+                        message.append(messageList.get(i)).append(" ");
+                    }
+
+                    client.sendMessageToOther("Message de : " + client+ " " + message.toString()+"\n");
+
                 }
-
-
-
 
                 // clear the list of messages
                 messageList.clear();
@@ -84,45 +87,10 @@ public class Server {
         });
 
         t.start();
-        System.out.println(t.isAlive());
+
 
     }
 
 }
 
 
-//
-//
-//            // Try to open a server socket on port 6666.
-//            ServerSocket socket_server = new ServerSocket(6666);
-//
-//            // Wait a request of connection from a Client.
-//            System.out.println("Waiting a request of connection from a Client...");
-//            // Accept it and get the socket linked to it.
-//            Socket socket_client = socket_server.accept();
-//
-//            // Open Input stream.
-//            BufferedReader in = new BufferedReader(new InputStreamReader(socket_client.getInputStream()));
-//            // Open Output stream.
-//            BufferedWriter out = new BufferedWriter(new OutputStreamWriter(socket_client.getOutputStream()));
-//
-//            // Read data from Client and display it.
-//            String line = in.readLine();
-//            System.out.println("Data received from Client : '" + line + "'.");
-//
-//            // Write data to Client.
-//            out.write("I am the Server");
-//            out.newLine();
-//            out.flush();
-//
-//            // Close streams and sockets.
-//            in.close();
-//            out.close();
-//            socket_client.close();
-//            socket_server.close();
-//        } catch (IOException e) {
-//            // Catch the exception error and display it.
-//            System.out.println(e);
-//        }
-//    }
-//}
