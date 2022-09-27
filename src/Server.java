@@ -1,9 +1,14 @@
 import java.io.*;
 import java.net.*;
+import java.util.ArrayList;
 
 public class Server {
+    static ArrayList<EchoThread> clientList = new ArrayList<EchoThread>();
+    //message list
+    static ArrayList<String> messageList = new ArrayList<String>();
 
     public static void main(String[] args) {
+
         System.out.println("SERVER SIDE:");
         try {
             ServerSocket serverSocket = null;
@@ -21,13 +26,68 @@ public class Server {
                 } catch (IOException e) {
                     System.out.println("I/O error: " + e);
                 }
+
                 // new thread for a client
-                new EchoThread(socket).start();
+                clientList.add(new EchoThread(socket, socket.hashCode()));
+                clientList.get(clientList.size() - 1).start();
+                System.out.println("hello");
+
+
+                // if new message receive, call run
+                for (int i = 0; i < clientList.size(); i++) {
+                    if (!clientList.get(i).isAlive()) {
+                        clientList.remove(i);
+                    }
+                }
             }
+
         } catch (Exception e) {
+
             e.printStackTrace();
         }
+
     }
+
+    public static void addMessage(String message){
+        messageList.add(message);
+
+        Thread t = new Thread(new Runnable() {
+            @Override
+            public void run() {
+
+                // for each client add message to list
+                for (int i = 0; i < clientList.size(); i++) {
+                    // if message is not empty
+                    if (!clientList.get(i).message.equals("")) {
+                        // add message to list
+                        messageList.add(clientList.get(i).message);
+                    }
+                }
+
+                // print the list of all messages in one line
+                for (int i = 0; i < messageList.size(); i++) {
+                    System.out.print(messageList.get(i));
+                }
+
+                // for every client
+                for (int i = 0; i < clientList.size(); i++) {
+                    // send message to client
+                    clientList.get(i).sendMessageToOther(messageList.get(messageList.size() - 1));
+                }
+
+
+
+
+                // clear the list of messages
+                messageList.clear();
+            }
+        });
+
+        t.start();
+        System.out.println(t.isAlive());
+
+    }
+
 }
 
 

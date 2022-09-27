@@ -2,7 +2,7 @@ import java.io.*;
 import java.net.*;
 import java.util.Scanner;
 
-public class Client {
+public class Client extends Thread {
 
     public static void main(String[] args) {
         System.out.println("CLIENT SIDE:");
@@ -15,19 +15,48 @@ public class Client {
             // Open Output stream.
             BufferedWriter out = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
 
+            // create a thread
+            Thread t = new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    while (true) {
+                        try {
+                            String line = in.readLine();
+                            System.out.println("Data received from Server : '" + line + "'.");
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+            });
+
+            t.start();
+
+
+
+
+            // Read data from Server and display it in thread
+
+
             while(true) {
+
+
+
                 // scanner with client input
                 Scanner sc = new Scanner(System.in);
                 String message = sc.nextLine();
 
                 // Write data to Server.
-                out.write(message);
-                out.newLine();
-                out.flush();
+                if (message != null) {
+                    out.write(message);
+                    out.newLine();
+                    out.flush();
+                }
 
-                // Read data from Server and display it.
-                String line = in.readLine();
-                System.out.println("Data received from Server : '" + line + "'.");
+//                // Read data from Server and display it.
+//                String line = in.readLine();
+//                System.out.println("Data received from Server : '" + line + "'.");
+
 
                 if (message.equals("QUIT")) {
                     break;

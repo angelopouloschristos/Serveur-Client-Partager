@@ -1,14 +1,51 @@
 import java.io.*;
 import java.net.Socket;
+import java.util.ArrayList;
 
 public class EchoThread extends Thread {
-    protected Socket socket;
 
-    public EchoThread(Socket clientSocket) {
+
+    protected Socket socket;
+    protected int id;
+
+    public String getMessage() {
+        return message;
+    }
+
+    public void setMessage(String message) {
+        this.message = message;
+    }
+
+    String message = "";
+
+
+    public void sendMessageToOther(String line) {
+
+        try {
+            DataOutputStream cout = new DataOutputStream(socket.getOutputStream());
+            cout.writeBytes(line + "\n\r");
+            cout.flush();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+
+    // if new message receive, notify server
+
+
+    public EchoThread(Socket clientSocket, int idClient) {
         this.socket = clientSocket;
+        this.id = idClient;
+        System.out.println("New client connected: " + idClient);
+
     }
 
     public void run() {
+        // function get name of thread
+        String name = Thread.currentThread().getName();
+        System.out.println("Thread " + name + " is running" + " id du client : " + id);
+
         InputStream inp = null;
         BufferedReader cin = null;
         DataOutputStream cout = null;
@@ -23,13 +60,19 @@ public class EchoThread extends Thread {
         while (true) {
             try {
                 line = cin.readLine();
+                this.message = line;
+                Server.addMessage(line);
                 if ((line == null) || line.equals("QUIT")) {
                     socket.close();
-                    return;
                 } else {
+
+                    sendMessageToOther(line);
+
                     System.out.println(line);
+
                     cout.writeBytes(line + "\n\r");
                     cout.flush();
+
 
                     //add the line to the file
                     try {
@@ -48,6 +91,11 @@ public class EchoThread extends Thread {
                 e.printStackTrace();
                 return;
             }
+
         }
     }
+
+
+
+
 }
