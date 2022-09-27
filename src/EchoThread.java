@@ -1,22 +1,19 @@
 import java.io.*;
 import java.net.Socket;
-import java.util.ArrayList;
 
 public class EchoThread extends Thread {
 
-
+    public String name;
     protected Socket socket;
+
     protected int id;
 
-    public String getMessage() {
-        return message;
-    }
 
-    public void setMessage(String message) {
-        this.message = message;
-    }
 
     String message = "";
+
+    // set id
+
 
 
     public void sendMessageToOther(String line) {
@@ -30,20 +27,22 @@ public class EchoThread extends Thread {
         }
     }
 
-
-    // if new message receive, notify server
-
-
     public EchoThread(Socket clientSocket, int idClient) {
         this.socket = clientSocket;
         this.id = idClient;
+        // ask the name of the client
+        // create a thread
         System.out.println("New client connected: " + idClient);
 
     }
 
+    public long getId(){
+        return id;
+    }
+
     public void run() {
         // function get name of thread
-        String name = Thread.currentThread().getName();
+        name = Thread.currentThread().getName();
         System.out.println("Thread " + name + " is running" + " id du client : " + id);
 
         InputStream inp = null;
@@ -66,14 +65,12 @@ public class EchoThread extends Thread {
                     socket.close();
                 } else {
 
-//                    sendMessageToOther(line);
 
 
                     cout.writeBytes(line + "\n\r");
                     cout.flush();
 
 
-                    //add the line to the file
                     try {
                         FileWriter fw = new FileWriter("src\\chat.txt", true);
                         BufferedWriter bw = new BufferedWriter(fw);
@@ -88,13 +85,9 @@ public class EchoThread extends Thread {
                 }
             } catch (IOException e) {
                 e.printStackTrace();
+                Server.clientList.remove(this);
                 return;
             }
-
         }
     }
-
-
-
-
 }

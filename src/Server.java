@@ -69,20 +69,21 @@ public class Server {
                 }
 
                 // for every client
-                for (EchoThread client: clientList) {
+                for (EchoThread clientList: clientList) {
                     // send message to client
                     //transform all the message in one string
                     StringBuilder message = new StringBuilder();
                     for (int i = 0; i < messageList.size(); i++) {
-                        message.append(messageList.get(i)).append(" ");
+                        message.append("last message from : "+ clientList.getId() +" " + messageList.get(i)).append(" ");
                     }
 
-                    client.sendMessageToOther("Message de : " + client+ " " + message.toString()+"\n");
+                    clientList.sendMessageToOther(message.toString());
 
                 }
+                messageList.clear();
 
                 // clear the list of messages
-                messageList.clear();
+
             }
         });
 
