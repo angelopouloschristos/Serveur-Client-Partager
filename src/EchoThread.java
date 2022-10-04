@@ -5,45 +5,43 @@ public class EchoThread extends Thread {
 
     public String name;
     protected Socket socket;
-
-    protected int id;
-
-
-
+    RealServer server;
     String message = "";
-
-    // set id
-
+    String username = "";
 
 
-    public void sendMessageToOther(String line) {
+//    public void sendMessageToOther(String line) {
+//
+//        try {
+//            DataOutputStream cout = new DataOutputStream(socket.getOutputStream());
+//
+//
+//            // for each users except myself send the line message
+//            for (User user : RealServer.clientList)
+//                if (!user.getUsername().equals(username)) {
+//                    cout = new DataOutputStream(user.thread.socket.getOutputStream());
+//
+//                    cout.writeBytes(this.username + " "+ line + "\n\r");
+//                    cout.flush();
+//                }
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
+//    }
 
-        try {
-            DataOutputStream cout = new DataOutputStream(socket.getOutputStream());
-            cout.writeBytes(line + "\n\r");
-            cout.flush();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    public EchoThread(Socket clientSocket, int idClient) {
+    public EchoThread(Socket clientSocket, String name, RealServer
+            s) {
         this.socket = clientSocket;
-        this.id = idClient;
-        // ask the name of the client
-        // create a thread
-        System.out.println("New client connected: " + idClient);
+        this.username = name;
+        this.server = s;
+        System.out.println("New client connected: " + name);
 
-    }
-
-    public long getId(){
-        return id;
     }
 
     public void run() {
         // function get name of thread
         name = Thread.currentThread().getName();
-        System.out.println("Thread " + name + " is running" + " id du client : " + id);
+        //System.out.println("Thread " + name + " is running" + " id du client : " + id);
 
         InputStream inp = null;
         BufferedReader cin = null;
@@ -60,32 +58,19 @@ public class EchoThread extends Thread {
             try {
                 line = cin.readLine();
                 this.message = line;
-                Server.addMessage(line);
+                server.addMessage(currentThread().getName() + " " + line , currentThread().getName());
                 if ((line == null) || line.equals("QUIT")) {
                     socket.close();
+                    return;
+
                 } else {
-
-
 
                     cout.writeBytes(line + "\n\r");
                     cout.flush();
 
-
-                    try {
-                        FileWriter fw = new FileWriter("src\\chat.txt", true);
-                        BufferedWriter bw = new BufferedWriter(fw);
-                        PrintWriter out = new PrintWriter(bw);
-//                        out.println(socket + " = " + line);
-                        out.close();
-                    } catch (IOException e) {
-                        System.out.println("Error writing to file");
-                    }
-
-
                 }
             } catch (IOException e) {
-                e.printStackTrace();
-                Server.clientList.remove(this);
+
                 return;
             }
         }

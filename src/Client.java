@@ -6,6 +6,15 @@ public class Client extends Thread {
 
     public static void main(String[] args) {
         System.out.println("CLIENT SIDE:");
+
+        // scanner for user input
+        Scanner scanner = new Scanner(System.in);
+        String name = "";
+        // let the user wirte his name
+        System.out.println("Enter your name: ");
+        name = scanner.nextLine();
+
+
         try {
             // Try to connect to the Server "localhost" on port 6666.
             Socket socket = new Socket("localhost", 6666);
@@ -14,6 +23,11 @@ public class Client extends Thread {
             BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
             // Open Output stream.
             BufferedWriter out = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
+
+            // send the name to the server
+            out.write("00" + name + "\n");
+            out.flush();
+
 
             // create a thread
             Thread t = new Thread(new Runnable() {
@@ -39,9 +53,6 @@ public class Client extends Thread {
 
 
             while(true) {
-
-
-
                 // scanner with client input
                 Scanner sc = new Scanner(System.in);
                 String message = sc.nextLine();
