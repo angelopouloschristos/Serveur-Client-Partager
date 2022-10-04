@@ -1,3 +1,6 @@
-Christos : test
-Christos : test
-Christos : bonjour
+Patryk => JKL
+Christos => ABC
+Patryk => DEF
+Christos => HIJ
+Patryk => KLM
+CHristos => TU ES BEAUPatryk => JE SAIS MERCICHristos => OKPatryk => J AIME HENRICHristos => HAAA BONPatryk => NONCHristos => AHHAAHAHAPatryk => C'EST UN FDP

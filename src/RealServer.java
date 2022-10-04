@@ -29,23 +29,17 @@ public class RealServer {
                 try {
 
                     socket = serverSocket.accept();
-                    // if the "in" message starts with 00
-                    // it's the name of the client
-                    // else it's a message
                     BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
                     String line = in.readLine();
 
                     if (line.startsWith("00")) {
-                        // remove the 00 from line
                         line = line.substring(2);
-                        // add line to user List
                         users.add(line);
 
                         clientList.add(new User(line, socket, this));
                         System.out.println("Current users: " + clientList.size());
                     }
 
-                    // if new message receive, call run
                     for (int i = 0; i < clientList.size(); i++) {
                         if (!clientList.get(i).thread.isAlive()) {
                             clientList.remove(i);
@@ -88,38 +82,38 @@ public class RealServer {
                     }
                 }
 
-//                // print the list of all messages in one line
-//                for (int i = 0; i < messageList.size(); i++) {
-//                    System.out.print(messageList.get(i) + " ");
-//                }
+                for (User user : clientList) {
+                    try {
+                        if (!user.getUsername().equals(t)) {
+                            DataOutputStream cout = new DataOutputStream(user.thread.socket.getOutputStream());
 
-
-
-                // for every client
-                for (User user : clientList)
-
-//                    user.thread.sendMessageToOther(message.toString());
-
-//                    if( user.getSocketuser() != null) {
-                        try {
-//                            DataOutputStream cout = new DataOutputStream(user.getSocketuser().getOutputStream());
-//
-
-                            // for each users except myself send the line message
-
-                            if (!user.getUsername().equals(t)) {
-                                DataOutputStream cout = new DataOutputStream(user.thread.socket.getOutputStream());
-
-                                cout.writeBytes(message + "  =>  " + "\n\r");
-                                cout.flush();
-                            }
-                        } catch (IOException e) {
-                            e.printStackTrace();
+                            cout.writeBytes(message + "\n\r");
+                            cout.flush();
                         }
-//                    }
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+
+
+                try {
+
+                    FileWriter fw = new FileWriter("chat.txt", true);
+                    BufferedWriter bw = new BufferedWriter(fw);
+                    PrintWriter out = new PrintWriter(bw);
+
+                    out.write( message + "\r");
+
+
+
+//                    out.println(message);
+                    out.close();
+
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
 
                 messageList.clear();
-
             }
         });
 

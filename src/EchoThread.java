@@ -10,25 +10,6 @@ public class EchoThread extends Thread {
     String username = "";
 
 
-//    public void sendMessageToOther(String line) {
-//
-//        try {
-//            DataOutputStream cout = new DataOutputStream(socket.getOutputStream());
-//
-//
-//            // for each users except myself send the line message
-//            for (User user : RealServer.clientList)
-//                if (!user.getUsername().equals(username)) {
-//                    cout = new DataOutputStream(user.thread.socket.getOutputStream());
-//
-//                    cout.writeBytes(this.username + " "+ line + "\n\r");
-//                    cout.flush();
-//                }
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
-//    }
-
     public EchoThread(Socket clientSocket, String name, RealServer
             s) {
         this.socket = clientSocket;
@@ -39,9 +20,8 @@ public class EchoThread extends Thread {
     }
 
     public void run() {
-        // function get name of thread
+
         name = Thread.currentThread().getName();
-        //System.out.println("Thread " + name + " is running" + " id du client : " + id);
 
         InputStream inp = null;
         BufferedReader cin = null;
@@ -58,7 +38,7 @@ public class EchoThread extends Thread {
             try {
                 line = cin.readLine();
                 this.message = line;
-                server.addMessage(currentThread().getName() + " " + line , currentThread().getName());
+                server.addMessage(currentThread().getName() + " => " + line , currentThread().getName());
                 if ((line == null) || line.equals("QUIT")) {
                     socket.close();
                     return;
