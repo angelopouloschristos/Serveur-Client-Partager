@@ -13,6 +13,7 @@ public class Client extends Thread {
         // let the user wirte his name
         System.out.println("Enter your name: ");
         name = scanner.nextLine();
+        String monMessage = "";
 
 
         try {
@@ -30,12 +31,15 @@ public class Client extends Thread {
 
 
             // create a thread
-            Thread t = new Thread(new Runnable() {
+            Thread t = new Thread(new Runnable()
+            {
                 @Override
                 public void run() {
                     while (true) {
                         try {
                             String line = in.readLine();
+
+
                             System.out.println("Data received from Server : '" + line + "'.");
                         } catch (IOException e) {
                             e.printStackTrace();
@@ -47,38 +51,59 @@ public class Client extends Thread {
             t.start();
 
 
+            Thread x = new Thread(new Runnable()
+            {
+                @Override
+                public void run() {
+                    while (true) {
+                        Scanner sc = new Scanner(System.in);
+                        String message = sc.nextLine();
 
+                        if (message != null) {
+                            try {
+                                out.write(message);
+                            } catch (IOException e) {
+                                throw new RuntimeException(e);
+                            }
+                            try {
+                                out.newLine();
+                            } catch (IOException e) {
+                                throw new RuntimeException(e);
+                            }
+                            try {
+                                out.flush();
+                            } catch (IOException e) {
+                                throw new RuntimeException(e);
+                            }
+                        }
+                        if (message.equals("QUIT")) {
+                            try {
+                                in.close();
+                            } catch (IOException e) {
+                                throw new RuntimeException(e);
+                            }
+                            try {
+                                out.close();
+                            } catch (IOException e) {
+                                throw new RuntimeException(e);
+                            }
+                            try {
+                                socket.close();
+                            } catch (IOException e) {
+                                throw new RuntimeException(e);
+                            }
+                        }
 
-            // Read data from Server and display it in thread
+                    }
 
-
-            while(true) {
-                // scanner with client input
-                Scanner sc = new Scanner(System.in);
-                String message = sc.nextLine();
-
-                // Write data to Server.
-                if (message != null) {
-                    out.write(message);
-                    out.newLine();
-                    out.flush();
                 }
+            });
 
-//                // Read data from Server and display it.
-//                String line = in.readLine();
-//                System.out.println("Data received from Server : '" + line + "'.");
+            x.start();
 
-
-                if (message.equals("QUIT")) {
-                    break;
-                }
-
-            }
 
             // Close streams and sockets.
-            in.close();
-            out.close();
-            socket.close();
+
 
         } catch (IOException e) {
             // Catch the exception error and display it.

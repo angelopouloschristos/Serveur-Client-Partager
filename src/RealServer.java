@@ -87,7 +87,7 @@ public class RealServer {
                         if (!user.getUsername().equals(t)) {
                             DataOutputStream cout = new DataOutputStream(user.thread.socket.getOutputStream());
 
-                            cout.writeBytes(message + "\n\r");
+                            cout.writeBytes(message + "\n");
                             cout.flush();
                         }
                     } catch (IOException e) {

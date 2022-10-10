@@ -45,7 +45,7 @@ public class EchoThread extends Thread {
 
                 } else {
 
-                    cout.writeBytes(line + "\n\r");
+                    cout.writeBytes(line + "\n");
                     cout.flush();
 
                 }
